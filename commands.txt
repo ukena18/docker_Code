@@ -1,0 +1,121 @@
+# to build a docker image 
+        # first create a docker file 
+        # pick which image and linux system to build 'node:18-alpine'
+        # choose the workrdir
+        # copy package.json so you can npm install
+        # npm install all dependencies
+        # copy rest of the code to the image 
+        # use cmd to start server
+    # -t = add name to the image
+    # . = the '.' at the end show create image from current dir
+    # since it has docker file it run all the commands one by one
+    # docker build -t <image_name> <create from >
+    ```
+    docker build -t node-app-image .
+    ```
+
+
+# to create a image container
+        #-first choose port to connect localhost  -p 3000:3000
+        # -p = tag for port . first = localhost , second = docker container
+        # -d = deattached mode . it lets you to use terminal after running
+        # --name = name of the container --name <container_name>
+        # finally add image you waan use to create a container
+    # docker run command create container
+    ```
+    docker run -p 3000:3000 -d --name node-app node-app-image
+    ```
+# to remove a container
+    # if container is runnig you can use -f tag to remove
+    ```
+    docker rm node-app -f
+    ```
+# list of container
+        # no runnig container
+            ```
+            docker ps
+            ```
+        # all container running includes
+            ```
+            docker ps -a
+            ```
+
+# to add volume to the container 
+        # it basically listen any changes in files in localhost 
+        # sync changes with docker container
+        # -v = for volume .. specify directory watching and directory will changes
+    # if you use windows to get current dir use ${pwd}
+    ```
+     docker run -v ${pwd}:/app  -p 3000:3000 -d --name node-app node-app-image   
+     ```
+    # if you wanna keep node_modules in the container when we remove from localhost 
+    # you can use another volume to specify it when sync dont delete node_modules inside container
+    # add '-v /app/node_modules'
+     ```
+     docker run -v ${pwd}:/app -v /app/node_modules  -p 3000:3000 -d --name node-app node-app-image   
+     ```
+
+    # read only volumes
+    # add at theend of volume ':ro'
+    ```
+     docker run -v ${pwd}:/app:ro -v /app/node_modules  -p 3000:3000 -d --name node-app node-app-image   
+    ```
+
+# to add env to the container
+        # you can either add inline or add env file
+    #for inline add --env `variable` ex. --env PORT=4000
+    ```
+    docker run -v ${pwd}:/app -v /app/node_modules --env PORT=4000  -p 3000:4000 -d --name node-app node-app-image  
+    ```
+    #or file  add --env-file 'file location' ex. --env-file ./.env
+    ```
+    docker run -v ${pwd}:/app -v /app/node_modules --env-file ./.env -p 3000:4000 -d --name node-app node-app-image  
+    ```
+# to access the container directory
+        #choose container you wanna check 
+        # sh = shell 
+        # exec = execute
+        # -it = interactive 
+    ```
+    docker exec -it node-app -sh
+    ```
+
+# linux commands 
+        #ls = list all file and directory
+        # printenv = list of all enviroment variables
+        # cat <file> = read file
+        # touch <file> = create file 
+
+
+# docker compose 
+        version: "3"
+            services:
+            node-app:
+                build: .
+                ports:
+                    - "3000:3000"
+                volumes:
+                    - ./:/app
+                    - /app/node_modules
+                environment:
+                    - PORT=3000
+                # env_file:
+                #   - ./.env
+    # build docker compose
+        ```
+        docker-compose up -d
+        ```
+        # build brand new  docker compose
+        # just use this it healthier  
+        ```
+        docker-compose up -d --build
+        ```
+    # remove docker compose
+    ```
+    docker-compose down -v
+    ```
+
+# to get docker container ip adress
+```
+    docker inspect <container-name>
+```
