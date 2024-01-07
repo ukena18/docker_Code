@@ -23,6 +23,7 @@
         # finally add image you waan use to create a container
     # docker run command create container
     ```
+
     docker run -p 3000:3000 -d --name node-app node-app-image
     ```
 # to remove a container
